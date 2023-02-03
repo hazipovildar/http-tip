@@ -60,7 +60,12 @@ const requestExecuter = async () => {
 
       if (command.url) {
         try {
-          await axios.get(command.url)
+          const url = command.url
+                        .replace(/=\$\{username\}/gi, '='+command.username)
+                        .replace(/=\$\{message\}/gi, '='+command.message)
+                        .replace(/=\$\{tokenCount\}/gi, '='+command.tokenCount)
+                        
+          await axios.get(url)
         } catch (e) {
           isError = true
         }
@@ -102,6 +107,8 @@ const condition = (num1, operator, num2) => {
 const httpTipRequest = (data) => {
   if (data.isEasyData && data.easyData.events.isTokens) {
     const tokenCount = data.easyData.tokenCount
+        , message = data.easyData.message
+        , username = data.easyData.username
 
     const rules = readRules()
 
@@ -118,7 +125,7 @@ const httpTipRequest = (data) => {
                       .find(isTrue => !isTrue) !== false
 
       if (isTrue && isPlatform) {
-        queueCommands.push(rule.commands)
+        queueCommands.push({ ...rule.commands, tokenCount, message, username })
       }
     }
   }
