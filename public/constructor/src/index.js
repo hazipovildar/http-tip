@@ -909,7 +909,7 @@ const App = () => {
                               )
                               : (
                                 <InputIcon
-                                  placeholder='Url http://192.168.1.1/on?tip={tokens}&text={message}'
+                                  placeholder='Url http://192.168.1.1/on?tip=${tokenCount}&text=${message}&user=${username}'
                                   value={command.url}
                                   icon={urlIcon}
                                   style={{ width: '385px' }}
