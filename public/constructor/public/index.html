@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel='preconnect' href='https://fonts.googleapis.com'>
+    <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
+    <link href='https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap' rel='stylesheet'>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js' integrity='sha512-YeeA/Qxn5hYdkukScTCNNOhTrv1C2RubAGButJ1rmgQwZf/HdRaCGl+JAVkqsqaNRaYNHdheiuKKuPf9mDcqKg==' crossorigin='anonymous' referrerpolicy='no-referrer'></script>
+    <script src='../../../node_modules/node-mermaid/store/client/app-transport-channel.js'></script>
+    <script>
+      window.MermaidAppTransportChannel = ({ port = 6969, debug = false } = { port: 6969, debug: false }) => {
+        const [,, repository, app] = window.location.href.match(/[^\/]+/gi)
+
+        let connectCallback = () => {}
+          , readDataCallbacks = []
+          , bluetoothProviderCallbacks = []
+
+        const socket = io(
+          `http://localhost:${port}?platform=app-transport-channel&repository=${repository}&app=${app}`,
+          {
+            options: {
+              reconnectionDelayMax: 10000
+            }
+          }
+        )
+
+        socket.on('connect', async () => {
+          debug && console.log('connect')
+          connectCallback()
+        })
+
+        socket.on('readData', data => {
+          debug && console.log('writeData', data)
+          readDataCallbacks.forEach(c => c(data))
+        })
+
+        socket.on('bluetoothProvider', data => {
+          debug && console.log('bluetoothProvider', data)
+          bluetoothProviderCallbacks.forEach(c => c(data))
+        })
+
+        return ({
+          on: (type, callback) => {
+            if (type === 'connect') {
+              connectCallback = callback
+            }
+
+            if (type === 'readData') {
+              readDataCallbacks.push(callback)
+            }
+
+            if (type === 'bluetoothProvider') {
+              bluetoothProviderCallbacks.push(callback)
+            }
+          },
+          writeData: data => {
+            debug && console.log('readData', data)
+            socket.emit('readData', data)
+          },
+          bluetoothProvider: data => {
+            debug && console.log('bluetoothProvider', data)
+            socket.emit('bluetoothProvider', data)
+          },
+          openWindow: data => {
+            const args = data
+                , file = data.file
+
+            delete args.file
+
+            socket.emit('openWindow', {
+              url: `${window.location.href.replace(window.location.href.match(/[^\/]+.html/)[0], '')}${file}`,
+              ...args
+            })
+          }
+        })
+      }
+    </script>
+    <title>Constructor HTTP</title>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
