@@ -654,7 +654,7 @@ const App = () => {
           <>
             {
               rule.conditions.slice(1).map(condition => (
-                <CreateRuleContainer key={condition.id} style={{ width: 'auto', marginLeft: '218px' }}>
+                <CreateRuleContainer key={condition.id} style={{ width: 'auto', marginLeft: '382px' }}>
                   <SelectIcon
                     value={condition.operator}
                     icon={CONDITION[condition.operator]}
