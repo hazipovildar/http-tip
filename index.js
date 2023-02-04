@@ -17,7 +17,7 @@ if (!fs.existsSync(rulesPath)) {
   )
 }
 
-const readRules = (() => {
+const readRulesOptimized = (() => {
   let data = []
 
   const read = async () => {
@@ -33,6 +33,18 @@ const readRules = (() => {
 
   return () => data
 })()
+
+const readRules = () => {
+  let data = []
+
+  try {
+    data = JSON.parse(await fse.readFileSync(rulesPath, 'utf8'))
+  } catch (e) {
+    data = []
+  }
+
+  return data
+}
 
 const writeRules = async data => {
   try {
@@ -64,7 +76,7 @@ const requestExecuter = async () => {
                         .replace(/=\$\{username\}/gi, '='+command.username)
                         .replace(/=\$\{message\}/gi, '='+command.message)
                         .replace(/=\$\{tokenCount\}/gi, '='+command.tokenCount)
-                        
+
           await axios.get(url)
         } catch (e) {
           isError = true
@@ -104,13 +116,13 @@ const condition = (num1, operator, num2) => {
   }
 }
 
-const httpTipRequest = (data) => {
+const httpTipRequest = async (data) => {
   if (data.isEasyData && data.easyData.events.isTokens) {
     const tokenCount = data.easyData.tokenCount
         , message = data.easyData.message
         , username = data.easyData.username
 
-    const rules = readRules()
+    const rules = await readRulesOptimized()
 
     for (let i = 0; i < rules.length; i++) {
       const rule = rules[i]
@@ -150,7 +162,7 @@ AppChannel.on('connect', () => {
       if (type === 'get-rules') {
         AppTransportChannel.writeData({
           type: 'get-rules',
-          data: readRules()
+          data: await readRules()
         })
       }
 
