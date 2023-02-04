@@ -80,7 +80,6 @@ const requestExecuter = async () => {
 
           await axios.get(url)
         } catch (e) {
-          console.log(e)
           isError = true
         }
       }
