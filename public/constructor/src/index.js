@@ -501,8 +501,9 @@ const App = () => {
     id: null,
     platform: 'All platforms',
     conditions: [{
-      operator: '==',
-      number: 10
+      operator: '>',
+      number: 10,
+      id: null
     }],
     commands: []
   }
