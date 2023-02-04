@@ -1022,8 +1022,15 @@ const App = () => {
           <ButtonIcon
             text='Save rules'
             icon={okIcon}
-            onClick={() => 
+            onClick={() =>
               AppTransportChannel.writeData({ type: 'set-rules', data: rules })
+            }
+          />
+          <ButtonIcon
+            text='Clear rules'
+            icon={deleteIcon}
+            onClick={() =>
+              AppTransportChannel.writeData({ type: 'set-rules', data: [] })
             }
           />
         </WhiteBox>
