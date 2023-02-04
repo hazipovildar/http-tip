@@ -723,301 +723,309 @@ const App = () => {
             }
           </>
         </WhiteBox>
-        <WhiteBox>
-          <BigTitle>Rules ({rules.length})</BigTitle>
-          <>
-            {
-              rules.map((rule, key) =>
-                <RuleContainer key={rule.id}>
-                  <Line />
-                  <RuleHeader>
-                    <Input
-                      value={rule.name || `GET Request #${key+1}`}
-                      style={{ width: '204px' }}
-                      onChange={
-                        value =>
-                          setRules(
-                            s =>
-                              s.map(
-                                _rule => {
-                                  if (_rule.id === rule.id) {
-                                    return {
-                                      ..._rule,
-                                      name: value
-                                    }
-                                  } else {
-                                    return _rule
-                                  }
-                                }
-                              )
-                          )
-                      }
-                    />
-                    <Select
-                      value={rule.platform}
-                      style={{ width: '150px' }}
-                      items={[
-                        'All platforms',
-                        'Chaturbate',
-                        'BongaCams',
-                        'Stripchat',
-                        'xHamsterLive',
-                      ]}
-                      onChange={
-                        value =>
-                          setRules(
-                            s =>
-                              s.map(
-                                _rule => {
-                                  if (_rule.id === rule.id) {
-                                    return {
-                                      ..._rule,
-                                      platform: value
-                                    }
-                                  } else {
-                                    return _rule
-                                  }
-                                }
-                              )
-                          )
-                      }
-                    />
-                    {
-                      rule.conditions.slice(0, 2).map(condition => (
-                        <Condition key={condition.id} icons={[tokensIcon, CONDITION[condition.operator]]} value={condition.number} />
-                      ))
-                    }
-                    <Icon
-                      icon={deleteIcon}
-                      onClick={() => {
-                        setRules(
-                          s =>
-                            s.filter(
-                              _rule =>
-                                _rule.id !== rule.id
-                            )
-                        )
-                      }}
-                    />
-                  </RuleHeader>
-                  <CommandsContainer>
-                    <MiddleTitle>Commands</MiddleTitle>
-                    <>
-                    {
-                      rule.commands.map(command => (
-                        <Command key={command.id}>
+        {
+          rules.length > 0
+            ? (
+              <WhiteBox>
+                <BigTitle>Rules ({rules.length})</BigTitle>
+                <>
+                  {
+                    rules.map((rule, key) =>
+                      <RuleContainer key={rule.id}>
+                        <Line />
+                        <RuleHeader>
+                          <Input
+                            value={rule.name || `GET Request #${key+1}`}
+                            style={{ width: '204px' }}
+                            onChange={
+                              value =>
+                                setRules(
+                                  s =>
+                                    s.map(
+                                      _rule => {
+                                        if (_rule.id === rule.id) {
+                                          return {
+                                            ..._rule,
+                                            name: value
+                                          }
+                                        } else {
+                                          return _rule
+                                        }
+                                      }
+                                    )
+                                )
+                            }
+                          />
+                          <Select
+                            value={rule.platform}
+                            style={{ width: '150px' }}
+                            items={[
+                              'All platforms',
+                              'Chaturbate',
+                              'BongaCams',
+                              'Stripchat',
+                              'xHamsterLive',
+                            ]}
+                            onChange={
+                              value =>
+                                setRules(
+                                  s =>
+                                    s.map(
+                                      _rule => {
+                                        if (_rule.id === rule.id) {
+                                          return {
+                                            ..._rule,
+                                            platform: value
+                                          }
+                                        } else {
+                                          return _rule
+                                        }
+                                      }
+                                    )
+                                )
+                            }
+                          />
                           {
-                            command.delay !== undefined
-                              ? (
-                                <InputIcon
-                                  placeholder='Delay (default: 500 ms)'
-                                  value={command.delay}
-                                  onFocus={
-                                    () =>
-                                      setRules(
-                                        s =>
-                                          s.map(
-                                            _rule => {
-                                              if (_rule.id === rule.id) {
-                                                return {
-                                                  ..._rule,
-                                                  commands: _rule.commands.map(
-                                                              _command => {
-                                                                if (_command.id === command.id) {
-                                                                  return {
-                                                                    ..._command,
-                                                                    delay: _command.delay.replace(/ ms/gi, '')
-                                                                  }
-                                                                } else {
-                                                                  return _command
-                                                                }
-                                                              }
-                                                            )
-                                                }
-                                              } else {
-                                                return _rule
-                                              }
-                                            }
-                                          )
-                                      )
-                                  }
-                                  onBlur={
-                                    () =>
-                                      setRules(
-                                        s =>
-                                          s.map(
-                                            _rule => {
-                                              if (_rule.id === rule.id) {
-                                                return {
-                                                  ..._rule,
-                                                  commands: _rule.commands.map(
-                                                              _command => {
-                                                                if (_command.id === command.id) {
-                                                                  return {
-                                                                    ..._command,
-                                                                    delay: `${_command.delay} ms`
-                                                                  }
-                                                                } else {
-                                                                  return _command
-                                                                }
-                                                              }
-                                                            )
-                                                }
-                                              } else {
-                                                return _rule
-                                              }
-                                            }
-                                          )
-                                      )
-                                  }
-                                  onChange={
-                                    value =>
-                                      setRules(
-                                        s =>
-                                          s.map(
-                                            _rule => {
-                                              if (_rule.id === rule.id) {
-                                                return {
-                                                  ..._rule,
-                                                  commands: _rule.commands.map(
-                                                              _command => {
-                                                                if (_command.id === command.id) {
-                                                                  return {
-                                                                    ..._command,
-                                                                    delay: value.replace(/ ms/gi, '')
-                                                                  }
-                                                                } else {
-                                                                  return _command
-                                                                }
-                                                              }
-                                                            )
-                                                }
-                                              } else {
-                                                return _rule
-                                              }
-                                            }
-                                          )
-                                      )
-                                  }
-                                  icon={timeIcon}
-                                  style={{ width: '150px' }}
-                                />
-                              )
-                              : (
-                                <InputIcon
-                                  placeholder='Url http://192.168.1.1/on?tip=${tokenCount}&text=${message}&user=${username}'
-                                  value={command.url}
-                                  icon={urlIcon}
-                                  style={{ width: '385px' }}
-                                  onChange={
-                                    value =>
-                                      setRules(
-                                        s =>
-                                          s.map(
-                                            _rule => {
-                                              if (_rule.id === rule.id) {
-                                                return {
-                                                  ..._rule,
-                                                  commands: _rule.commands.map(
-                                                              _command => {
-                                                                if (_command.id === command.id) {
-                                                                  return {
-                                                                    ..._command,
-                                                                    url: value
-                                                                  }
-                                                                } else {
-                                                                  return _command
-                                                                }
-                                                              }
-                                                            )
-                                                }
-                                              } else {
-                                                return _rule
-                                              }
-                                            }
-                                          )
-                                      )
-                                  }
-                                />
-                              )
+                            rule.conditions.slice(0, 2).map(condition => (
+                              <Condition key={condition.id} icons={[tokensIcon, CONDITION[condition.operator]]} value={condition.number} />
+                            ))
                           }
                           <Icon
                             icon={deleteIcon}
                             onClick={() => {
                               setRules(
                                 s =>
-                                  s.map(
-                                    _rule => {
-                                      if (_rule.id === rule.id) {
-                                        return {
-                                          ..._rule,
-                                          commands: _rule.commands.filter(
-                                                      _command =>
-                                                        _command.id !== command.id
-                                                    )
-                                        }
-                                      } else {
-                                        return _rule
-                                      }
-                                    }
+                                  s.filter(
+                                    _rule =>
+                                      _rule.id !== rule.id
                                   )
                               )
                             }}
                           />
-                        </Command>
-                      ))
-                    }
-                    </>
-                    <Command>
-                      <ButtonIcon
-                        text='URL'
-                        icon={addIcon}
-                        onClick={() => {
-                          setRules(
-                            s =>
-                              s.map(
-                                _rule => {
-                                  if (_rule.id === rule.id) {
-                                    return {
-                                      ..._rule,
-                                      commands: [..._rule.commands, { url: '', id: Math.random() * 10000 }]
-                                    }
-                                  } else {
-                                    return _rule
-                                  }
+                        </RuleHeader>
+                        <CommandsContainer>
+                          <MiddleTitle>Commands</MiddleTitle>
+                          <>
+                          {
+                            rule.commands.map(command => (
+                              <Command key={command.id}>
+                                {
+                                  command.delay !== undefined
+                                    ? (
+                                      <InputIcon
+                                        placeholder='Delay (default: 500 ms)'
+                                        value={command.delay}
+                                        onFocus={
+                                          () =>
+                                            setRules(
+                                              s =>
+                                                s.map(
+                                                  _rule => {
+                                                    if (_rule.id === rule.id) {
+                                                      return {
+                                                        ..._rule,
+                                                        commands: _rule.commands.map(
+                                                                    _command => {
+                                                                      if (_command.id === command.id) {
+                                                                        return {
+                                                                          ..._command,
+                                                                          delay: _command.delay.replace(/ ms/gi, '')
+                                                                        }
+                                                                      } else {
+                                                                        return _command
+                                                                      }
+                                                                    }
+                                                                  )
+                                                      }
+                                                    } else {
+                                                      return _rule
+                                                    }
+                                                  }
+                                                )
+                                            )
+                                        }
+                                        onBlur={
+                                          () =>
+                                            setRules(
+                                              s =>
+                                                s.map(
+                                                  _rule => {
+                                                    if (_rule.id === rule.id) {
+                                                      return {
+                                                        ..._rule,
+                                                        commands: _rule.commands.map(
+                                                                    _command => {
+                                                                      if (_command.id === command.id) {
+                                                                        return {
+                                                                          ..._command,
+                                                                          delay: `${_command.delay} ms`
+                                                                        }
+                                                                      } else {
+                                                                        return _command
+                                                                      }
+                                                                    }
+                                                                  )
+                                                      }
+                                                    } else {
+                                                      return _rule
+                                                    }
+                                                  }
+                                                )
+                                            )
+                                        }
+                                        onChange={
+                                          value =>
+                                            setRules(
+                                              s =>
+                                                s.map(
+                                                  _rule => {
+                                                    if (_rule.id === rule.id) {
+                                                      return {
+                                                        ..._rule,
+                                                        commands: _rule.commands.map(
+                                                                    _command => {
+                                                                      if (_command.id === command.id) {
+                                                                        return {
+                                                                          ..._command,
+                                                                          delay: value.replace(/ ms/gi, '')
+                                                                        }
+                                                                      } else {
+                                                                        return _command
+                                                                      }
+                                                                    }
+                                                                  )
+                                                      }
+                                                    } else {
+                                                      return _rule
+                                                    }
+                                                  }
+                                                )
+                                            )
+                                        }
+                                        icon={timeIcon}
+                                        style={{ width: '150px' }}
+                                      />
+                                    )
+                                    : (
+                                      <InputIcon
+                                        placeholder='Url http://192.168.1.1/on?tip=${tokenCount}&text=${message}&user=${username}'
+                                        value={command.url}
+                                        icon={urlIcon}
+                                        style={{ width: '385px' }}
+                                        onChange={
+                                          value =>
+                                            setRules(
+                                              s =>
+                                                s.map(
+                                                  _rule => {
+                                                    if (_rule.id === rule.id) {
+                                                      return {
+                                                        ..._rule,
+                                                        commands: _rule.commands.map(
+                                                                    _command => {
+                                                                      if (_command.id === command.id) {
+                                                                        return {
+                                                                          ..._command,
+                                                                          url: value
+                                                                        }
+                                                                      } else {
+                                                                        return _command
+                                                                      }
+                                                                    }
+                                                                  )
+                                                      }
+                                                    } else {
+                                                      return _rule
+                                                    }
+                                                  }
+                                                )
+                                            )
+                                        }
+                                      />
+                                    )
                                 }
-                              )
-                          )
-                        }}
-                      />
-                      <ButtonIcon
-                        text='Delay'
-                        icon={addIcon}
-                        onClick={() => {
-                          setRules(
-                            s =>
-                              s.map(
-                                _rule => {
-                                  if (_rule.id === rule.id) {
-                                    return {
-                                      ..._rule,
-                                      commands: [..._rule.commands, { delay: '500 ms', id: Math.random() * 10000 }]
-                                    }
-                                  } else {
-                                    return _rule
-                                  }
-                                }
-                              )
-                          )
-                        }}
-                      />
-                    </Command>
-                  </CommandsContainer>
-                </RuleContainer>
-              )
-            }
-          </>
-        </WhiteBox>
+                                <Icon
+                                  icon={deleteIcon}
+                                  onClick={() => {
+                                    setRules(
+                                      s =>
+                                        s.map(
+                                          _rule => {
+                                            if (_rule.id === rule.id) {
+                                              return {
+                                                ..._rule,
+                                                commands: _rule.commands.filter(
+                                                            _command =>
+                                                              _command.id !== command.id
+                                                          )
+                                              }
+                                            } else {
+                                              return _rule
+                                            }
+                                          }
+                                        )
+                                    )
+                                  }}
+                                />
+                              </Command>
+                            ))
+                          }
+                          </>
+                          <Command>
+                            <ButtonIcon
+                              text='URL'
+                              icon={addIcon}
+                              onClick={() => {
+                                setRules(
+                                  s =>
+                                    s.map(
+                                      _rule => {
+                                        if (_rule.id === rule.id) {
+                                          return {
+                                            ..._rule,
+                                            commands: [..._rule.commands, { url: '', id: Math.random() * 10000 }]
+                                          }
+                                        } else {
+                                          return _rule
+                                        }
+                                      }
+                                    )
+                                )
+                              }}
+                            />
+                            <ButtonIcon
+                              text='Delay'
+                              icon={addIcon}
+                              onClick={() => {
+                                setRules(
+                                  s =>
+                                    s.map(
+                                      _rule => {
+                                        if (_rule.id === rule.id) {
+                                          return {
+                                            ..._rule,
+                                            commands: [..._rule.commands, { delay: '500 ms', id: Math.random() * 10000 }]
+                                          }
+                                        } else {
+                                          return _rule
+                                        }
+                                      }
+                                    )
+                                )
+                              }}
+                            />
+                          </Command>
+                        </CommandsContainer>
+                      </RuleContainer>
+                    )
+                  }
+                </>
+              </WhiteBox>
+            )
+            : (
+              null
+            )
+        }
         <WhiteBox style={{ flexDirection: 'row' }}>
           <ButtonIcon
             text='Save rules'
