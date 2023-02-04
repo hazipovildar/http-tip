@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/official/http-tip/public/constructor/build/static/css/main.068e1a31.css",
-    "main.js": "/official/http-tip/public/constructor/build/static/js/main.14b480ba.js",
+    "main.js": "/official/http-tip/public/constructor/build/static/js/main.1322e880.js",
     "static/media/tokens.svg": "/official/http-tip/public/constructor/build/static/media/tokens.5dcbb591d4bcd31f62891376a878afe8.svg",
     "static/media/url.svg": "/official/http-tip/public/constructor/build/static/media/url.9c90a98795669f14478f9f5e7100021d.svg",
     "static/media/operator-less-or-equally.svg": "/official/http-tip/public/constructor/build/static/media/operator-less-or-equally.54a6dbb390c8cc4253f60736ab4c74b4.svg",
@@ -17,10 +17,10 @@
     "static/media/top.svg": "/official/http-tip/public/constructor/build/static/media/top.699397c7c4c32555c9db217a42540867.svg",
     "static/media/bottom.svg": "/official/http-tip/public/constructor/build/static/media/bottom.b84572f6b969a9381baf5f062ea18f6b.svg",
     "main.068e1a31.css.map": "/official/http-tip/public/constructor/build/static/css/main.068e1a31.css.map",
-    "main.14b480ba.js.map": "/official/http-tip/public/constructor/build/static/js/main.14b480ba.js.map"
+    "main.1322e880.js.map": "/official/http-tip/public/constructor/build/static/js/main.1322e880.js.map"
   },
   "entrypoints": [
     "static/css/main.068e1a31.css",
-    "static/js/main.14b480ba.js"
+    "static/js/main.1322e880.js"
   ]
 }

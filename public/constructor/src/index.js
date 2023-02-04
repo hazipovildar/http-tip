@@ -1030,9 +1030,12 @@ const App = () => {
           <ButtonIcon
             text='Save rules'
             icon={okIcon}
-            onClick={() =>
+            onClick={() => {
               AppTransportChannel.writeData({ type: 'set-rules', data: rules })
-            }
+              setTimeout(() => {
+                window.close()
+              }, 2000)
+            }}
           />
           <ButtonIcon
             text='Clear rules'
