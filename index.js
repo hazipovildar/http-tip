@@ -34,7 +34,7 @@ const readRulesOptimized = (() => {
   return () => data
 })()
 
-const readRules = () => {
+const readRules = async () => {
   let data = []
 
   try {
