@@ -58,9 +58,10 @@ const writeRules = async data => {
 const queueCommands = []
 
 const requestExecuter = async () => {
-  const commands = queueCommands[0]
+  const queue = queueCommands[0]
 
-  if (commands) {
+  if (queue) {
+    const { commands, username, message, tokenCount } = queue
     let isError = false
 
     for (let i = 0; i < commands.length; i++) {
@@ -73,12 +74,13 @@ const requestExecuter = async () => {
       if (command.url) {
         try {
           const url = command.url
-                        .replace(/=\$\{username\}/gi, '='+command.username)
-                        .replace(/=\$\{message\}/gi, '='+command.message)
-                        .replace(/=\$\{tokenCount\}/gi, '='+command.tokenCount)
+                        .replace(/=\$\{username\}/gi, '='+username)
+                        .replace(/=\$\{message\}/gi, '='+message)
+                        .replace(/=\$\{tokenCount\}/gi, '='+tokenCount)
 
           await axios.get(url)
         } catch (e) {
+          console.log(e)
           isError = true
         }
       }
@@ -137,7 +139,12 @@ const httpTipRequest = async (data) => {
                       .find(isTrue => !isTrue) !== false
 
       if (isTrue && isPlatform) {
-        queueCommands.push({ ...rule.commands, tokenCount, message, username })
+        queueCommands.push({
+          commands: rule.commands,
+          tokenCount,
+          message,
+          username
+        })
       }
     }
   }
