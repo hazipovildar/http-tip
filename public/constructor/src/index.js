@@ -511,10 +511,6 @@ const App = () => {
       , [rule, setRule] = useState(defaultRule)
 
   useEffect(() => {
-    AppTransportChannel.writeData({ type: 'set-rules', data: rules })
-  }, [JSON.stringify(rules)])
-
-  useEffect(() => {
     AppTransportChannel.on('connect', () => {
       AppTransportChannel.on('readData', async ({ type, data }) => {
         if (type === 'reload') {
@@ -1021,6 +1017,15 @@ const App = () => {
               )
             }
           </>
+        </WhiteBox>
+        <WhiteBox>
+          <ButtonIcon
+            text='Save rules'
+            icon={okIcon}
+            onClick={() => 
+              AppTransportChannel.writeData({ type: 'set-rules', data: rules })
+            }
+          />
         </WhiteBox>
       </Wrapper>
     </Body>
