@@ -1018,7 +1018,7 @@ const App = () => {
             }
           </>
         </WhiteBox>
-        <WhiteBox>
+        <WhiteBox style={{ display: 'flex' }}>
           <ButtonIcon
             text='Save rules'
             icon={okIcon}
