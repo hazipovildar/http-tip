@@ -35,10 +35,11 @@
         }
 
         if (type === 'queue') {
+          queueNode.innerHTML = data
           if (data > 0) {
-            queueNode.innerHTML = data
+            queueNode.style.opacity = 1
           } else {
-            queueNode.innerHTML = ''
+            queueNode.style.opacity = 0
           }
         }
       })
