@@ -18,18 +18,28 @@
     <div id='constructor' class='btn'>
       <div class='btn_text'>Constructor HTTP</div>
       <img src='btn-icon.svg' class='btn_icon'>
+      <div class='queue'></div>
     </div>
   </div>
   <script>
     const AppTransportChannel = MermaidAppTransportChannel()
 
     const constructorNode = document.querySelector('#constructor')
+        , queueNode = document.querySelector('queue')
 
     AppTransportChannel.on('connect', () => {
       AppTransportChannel.on('readData', async ({ type, data }) => {
         if (type === 'reload') {
           localStorage.clear()
           window.location.reload()
+        }
+
+        if (type === 'queue') {
+          if (data > 0) {
+            queueNode.innerHTML = data
+          } else {
+            queueNode.innerHTML = ''
+          }
         }
       })
 

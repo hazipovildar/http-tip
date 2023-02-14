@@ -1,12 +1,16 @@
 const AppChannel            = require('node-mermaid/store/app-channel')()
     , AppTransportChannel   = require('node-mermaid/store/app-transport-channel')()
     , appMemoryFolderPath   = require('node-mermaid/store/app-memory-folder-path')
+    , Queue                 = require('node-mermaid/store/queue')
     , parser                = require('node-mermaid/parser')
     , axios                 = require('axios')
     , sleep                 = require('sleep-promise')
     , fse                   = require('fs-extra')
     , fs                    = require('fs')
     , path                  = require('path')
+    , condition             = require('./condition')
+
+const queue = new Queue()
 
 const rulesPath = path.join(appMemoryFolderPath, 'rules.json')
 
@@ -55,69 +59,39 @@ const writeRules = async data => {
   }
 }
 
-const queueCommands = []
+queue.executer((data, next, repeat) => {
+  const { commands, username, message, tokenCount } = data
+  let isError = false
 
-const requestExecuter = async () => {
-  const queue = queueCommands[0]
+  for (let i = 0; i < commands.length; i++) {
+    const command = commands[i]
 
-  if (queue) {
-    const { commands, username, message, tokenCount } = queue
-    let isError = false
-
-    for (let i = 0; i < commands.length; i++) {
-      const command = commands[i]
-
-      if (command.delay) {
-        await sleep(parseInt(command.delay))
-      }
-
-      if (command.url) {
-        try {
-          const url = command.url
-                        .replace(/=\$\{username\}/gi, '='+username)
-                        .replace(/=\$\{message\}/gi, '='+message)
-                        .replace(/=\$\{tokenCount\}/gi, '='+tokenCount)
-
-          await axios.get(url)
-        } catch (e) {
-          isError = true
-        }
-      }
+    if (command.delay) {
+      await sleep(parseInt(command.delay))
     }
 
-    if (!isError) {
-      queueCommands.shift()
+    if (command.url) {
+      try {
+        const url = command.url
+                      .replace(/=\$\{username\}/gi, '='+username)
+                      .replace(/=\$\{message\}/gi, '='+message)
+                      .replace(/=\$\{tokenCount\}/gi, '='+tokenCount)
+
+        await axios.get(url)
+      } catch (e) {
+        isError = true
+      }
     }
   }
 
-  setTimeout(requestExecuter, 100)
-}
-
-requestExecuter()
-
-const condition = (num1, operator, num2) => {
-  if (operator === '==') {
-    return num1 === num2
+  if (!isError) {
+    next()
+  } else {
+    repeat()
   }
+})
 
-  if (operator === '>') {
-    return num1 > num2
-  }
-
-  if (operator === '<') {
-    return num1 < num2
-  }
-
-  if (operator === '>=') {
-    return num1 >= num2
-  }
-
-  if (operator === '<=') {
-    return num1 <= num2
-  }
-}
-
-const httpTipRequest = async (data) => {
+const httpTipRequest = async data => {
   if (data.isEasyData && data.easyData.events.isTokens) {
     const tokenCount = data.easyData.tokenCount
         , message = data.easyData.message
@@ -138,7 +112,7 @@ const httpTipRequest = async (data) => {
                       .find(isTrue => !isTrue) !== false
 
       if (isTrue && isPlatform) {
-        queueCommands.push({
+        queue.add({
           commands: rule.commands,
           tokenCount,
           message,
@@ -148,6 +122,13 @@ const httpTipRequest = async (data) => {
     }
   }
 }
+
+queue.status(count => {
+  AppTransportChannel.writeData({
+    type: 'queue',
+    data: count
+  })
+})
 
 AppChannel.on('connect', () => {
   AppTransportChannel.on('connect', () => {
