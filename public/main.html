@@ -25,7 +25,7 @@
     const AppTransportChannel = MermaidAppTransportChannel()
 
     const constructorNode = document.querySelector('#constructor')
-        , queueNode = document.querySelector('queue')
+        , queueNode = document.querySelector('.queue')
 
     AppTransportChannel.on('connect', () => {
       AppTransportChannel.on('readData', async ({ type, data }) => {
