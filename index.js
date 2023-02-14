@@ -59,7 +59,7 @@ const writeRules = async data => {
   }
 }
 
-queue.executer((data, next, repeat) => {
+queue.executer(async (data, next, repeat) => {
   const { commands, username, message, tokenCount } = data
   let isError = false
 
