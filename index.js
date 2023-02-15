@@ -1,7 +1,7 @@
 const AppChannel            = require('node-mermaid/store/app-channel')()
     , AppTransportChannel   = require('node-mermaid/store/app-transport-channel')()
     , Queue                 = require('node-mermaid/store/queue')
-    , MemoryFileJSON        = require('node-mermaid/store/memory-file-json')
+    , AppMemoryFileJSON     = require('node-mermaid/store/app-memory-file-json')
     , parser                = require('node-mermaid/parser')
     , axios                 = require('axios')
     , sleep                 = require('sleep-promise')
@@ -12,7 +12,7 @@ const AppChannel            = require('node-mermaid/store/app-channel')()
 
 const queue = new Queue()
 
-const mfJSON = new MemoryFileJSON('rules', [], 10000)
+const rules = new AppMemoryFileJSON('rules', [], 10000)
 
 queue.executer(async (data, next, repeat) => {
   const { commands, username, message, tokenCount } = data
@@ -52,7 +52,7 @@ const httpTipRequest = async data => {
         , message = data.easyData.message
         , username = data.easyData.username
 
-    const rules = mfJSON.readInterval()
+    const rules = rules.readInterval()
 
     for (let i = 0; i < rules.length; i++) {
       const rule = rules[i]
@@ -104,13 +104,13 @@ AppChannel.on('connect', () => {
       if (type === 'get-rules') {
         AppTransportChannel.writeData({
           type: 'get-rules',
-          data: await mfJSON.read()
+          data: await rules.read()
         })
       }
 
       if (type === 'set-rules') {
         try {
-          await mfJSON.write(data)
+          await rules.write(data)
         } catch (e) {}
       }
     })
