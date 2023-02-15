@@ -1,7 +1,7 @@
 const AppChannel            = require('node-mermaid/store/app-channel')()
     , AppTransportChannel   = require('node-mermaid/store/app-transport-channel')()
-    , appMemoryFolderPath   = require('node-mermaid/store/app-memory-folder-path')
     , Queue                 = require('node-mermaid/store/queue')
+    , MemoryFileJSON        = require('node-mermaid/store/memory-file-json')
     , parser                = require('node-mermaid/parser')
     , axios                 = require('axios')
     , sleep                 = require('sleep-promise')
@@ -12,52 +12,7 @@ const AppChannel            = require('node-mermaid/store/app-channel')()
 
 const queue = new Queue()
 
-const rulesPath = path.join(appMemoryFolderPath, 'rules.json')
-
-if (!fs.existsSync(rulesPath)) {
-  fs.writeFileSync(
-    rulesPath,
-    JSON.stringify([])
-  )
-}
-
-const readRulesOptimized = (() => {
-  let data = []
-
-  const read = async () => {
-    try {
-      data = JSON.parse(await fse.readFileSync(rulesPath, 'utf8'))
-    } catch (e) {
-      data = []
-    }
-  }
-
-  setInterval(read, 10000)
-  read()
-
-  return () => data
-})()
-
-const readRules = async () => {
-  let data = []
-
-  try {
-    data = JSON.parse(await fse.readFileSync(rulesPath, 'utf8'))
-  } catch (e) {
-    data = []
-  }
-
-  return data
-}
-
-const writeRules = async data => {
-  try {
-    await fse.writeFileSync(rulesPath, JSON.stringify(data))
-    return true
-  } catch (e) {
-    return false
-  }
-}
+const mfJSON = new MemoryFileJSON('rules', [], 10000)
 
 queue.executer(async (data, next, repeat) => {
   const { commands, username, message, tokenCount } = data
@@ -97,7 +52,7 @@ const httpTipRequest = async data => {
         , message = data.easyData.message
         , username = data.easyData.username
 
-    const rules = await readRulesOptimized()
+    const rules = mfJSON.readInterval()
 
     for (let i = 0; i < rules.length; i++) {
       const rule = rules[i]
@@ -149,13 +104,13 @@ AppChannel.on('connect', () => {
       if (type === 'get-rules') {
         AppTransportChannel.writeData({
           type: 'get-rules',
-          data: await readRules()
+          data: await mfJSON.read()
         })
       }
 
       if (type === 'set-rules') {
         try {
-          await writeRules(data)
+          await mfJSON.write(data)
         } catch (e) {}
       }
     })
