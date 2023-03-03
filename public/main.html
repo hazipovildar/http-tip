@@ -22,39 +22,43 @@
     </div>
   </div>
   <script>
-    const AppTransportChannel = MermaidAppTransportChannel()
+    const init = () => {
+      const AppTransportChannel = MermaidAppTransportChannel()
 
-    const constructorNode = document.querySelector('#constructor')
-        , queueNode = document.querySelector('.queue')
+      const constructorNode = document.querySelector('#constructor')
+          , queueNode = document.querySelector('.queue')
 
-    AppTransportChannel.on('connect', () => {
-      AppTransportChannel.on('readData', async ({ type, data }) => {
-        if (type === 'reload') {
-          localStorage.clear()
-          window.location.reload()
-        }
-
-        if (type === 'queue') {
-          queueNode.innerHTML = data
-          if (data > 0) {
-            queueNode.style.opacity = 1
-          } else {
-            queueNode.style.opacity = 0
+      AppTransportChannel.on('connect', () => {
+        AppTransportChannel.on('readData', async ({ type, data }) => {
+          if (type === 'reload') {
+            localStorage.clear()
+            window.location.reload()
           }
-        }
-      })
 
-      constructorNode.addEventListener('click', () => {
-        AppTransportChannel.openWindow({
-          file: 'constructor/build/index.html',
-          width: 870,
-          minWidth: 870,
-          maxWidth: 870,
-          height: 700,
-          alwaysOnTop: true
+          if (type === 'queue') {
+            queueNode.innerHTML = data
+            if (data > 0) {
+              queueNode.style.opacity = 1
+            } else {
+              queueNode.style.opacity = 0
+            }
+          }
+        })
+
+        constructorNode.addEventListener('click', () => {
+          AppTransportChannel.openWindow({
+            file: 'constructor/build/index.html',
+            width: 870,
+            minWidth: 870,
+            maxWidth: 870,
+            height: 700,
+            alwaysOnTop: true
+          })
         })
       })
-    })
+    }
+
+    window.addEventListener('load', init)
   </script>
 </body>
 </html>
