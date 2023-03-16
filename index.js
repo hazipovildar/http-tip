@@ -32,7 +32,11 @@ queue.executer(async (data, next, repeat) => {
                       .replace(/=\$\{message\}/gi, '='+message)
                       .replace(/=\$\{tokenCount\}/gi, '='+tokenCount)
 
-        await axios.get(url)
+        await axios({
+          method: 'get',
+          url,
+          timeout: 1000 * 60 * 15 
+        })
       } catch (e) {
         isError = true
       }
